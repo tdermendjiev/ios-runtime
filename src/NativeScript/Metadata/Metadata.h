@@ -689,6 +689,15 @@ public:
     }
 };
 
+struct SwiftFuncMeta : Meta {
+
+public:
+    PtrTo<TypeEncodingsList<ArrayCount>> _encoding;
+    const TypeEncodingsList<ArrayCount>* encodings() const {
+        return _encoding.valuePtr();
+    }
+};
+
 struct JsCodeMeta : Meta {
 
 private:

@@ -405,6 +405,10 @@ Strong<ReferenceTypeInstance> TypeFactory::getReferenceType(GlobalObject* global
     return result;
 }
 
+Strong<JSC::JSCell> TypeFactory::getVoidType(GlobalObject* globalObject) {
+    return Strong<JSCell>(globalObject->vm(), this->_voidType.get());
+}
+
 Strong<JSC::JSCell> TypeFactory::parseType(GlobalObject* globalObject, const Metadata::TypeEncoding*& typeEncoding, bool isStructMember) {
     DeferGCForAWhile deferGC(globalObject->vm().heap);
 

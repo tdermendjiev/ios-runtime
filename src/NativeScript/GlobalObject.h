@@ -77,6 +77,10 @@ public:
     JSC::Structure* ffiFunctionWrapperStructure() const {
         return this->_ffiFunctionWrapperStructure.get();
     }
+    
+    JSC::Structure* swiftFunctionWrapperStructure() const {
+        return this->_swiftFunctionWrapperStructure.get();
+    }
 
     JSC::Structure* objCBlockCallbackStructure() const {
         return this->_objCBlockCallbackStructure.get();
@@ -247,6 +251,7 @@ private:
     JSC::WriteBarrier<JSC::Structure> _objCConstructorWrapperStructure;
     JSC::WriteBarrier<JSC::Structure> _objCBlockWrapperStructure;
     JSC::WriteBarrier<JSC::Structure> _ffiFunctionWrapperStructure;
+    JSC::WriteBarrier<JSC::Structure> _swiftFunctionWrapperStructure;
 
     JSC::WriteBarrier<JSC::Structure> _objCBlockCallbackStructure;
     JSC::WriteBarrier<JSC::Structure> _objCMethodCallbackStructure;

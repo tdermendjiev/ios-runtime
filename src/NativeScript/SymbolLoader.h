@@ -23,6 +23,7 @@ public:
     static SymbolLoader& instance();
 
     void* loadFunctionSymbol(const Metadata::ModuleMeta*, const char* symbolName);
+    void* loadSwiftFunctionSymbol(const char* symbolName);
     void* loadDataSymbol(const Metadata::ModuleMeta*, const char* symbolName);
     bool ensureModule(const Metadata::ModuleMeta*);
 

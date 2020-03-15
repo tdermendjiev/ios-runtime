@@ -9,6 +9,7 @@
 #include "GlobalObject.h"
 #include "AllocatedPlaceholder.h"
 #include "CFunctionWrapper.h"
+#include "SwiftFunctionWrapper.h"
 #include "FFICallPrototype.h"
 #include "FFIFunctionCallback.h"
 #include "Interop.h"
@@ -53,6 +54,7 @@
 #include <JavaScriptCore/runtime/VMEntryScope.h>
 #include <chrono>
 #include <string>
+#include <iostream>
 
 namespace NativeScript {
 using namespace JSC;
@@ -198,6 +200,7 @@ void GlobalObject::finishCreation(VM& vm, WTF::String applicationPath) {
     this->_objCConstructorWrapperStructure.set(vm, this, ObjCConstructorWrapper::createStructure(vm, this, this->functionPrototype()));
     this->_objCBlockWrapperStructure.set(vm, this, ObjCBlockWrapper::createStructure(vm, this, this->ffiCallPrototype()));
     this->_ffiFunctionWrapperStructure.set(vm, this, CFunctionWrapper::createStructure(vm, this, this->ffiCallPrototype()));
+    this->_swiftFunctionWrapperStructure.set(vm, this, SwiftFunctionWrapper::createStructure(vm, this, this->ffiCallPrototype()));
     this->_objCBlockCallbackStructure.set(vm, this, ObjCBlockCallback::createStructure(vm, this, jsNull()));
     this->_objCMethodCallbackStructure.set(vm, this, ObjCMethodCallback::createStructure(vm, this, jsNull()));
     this->_ffiFunctionCallbackStructure.set(vm, this, FFIFunctionCallback::createStructure(vm, this, jsNull()));
@@ -292,6 +295,7 @@ void GlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor) {
     visitor.append(globalObject->_objCConstructorWrapperStructure);
     visitor.append(globalObject->_objCBlockWrapperStructure);
     visitor.append(globalObject->_ffiFunctionWrapperStructure);
+    visitor.append(globalObject->_swiftFunctionWrapperStructure);
     visitor.append(globalObject->_objCBlockCallbackStructure);
     visitor.append(globalObject->_objCMethodCallbackStructure);
     visitor.append(globalObject->_ffiFunctionCallbackStructure);
@@ -313,6 +317,7 @@ bool GlobalObject::getOwnPropertySlot(JSObject* object, ExecState* execState, Pr
         if (Base::getOwnPropertySlot(object, execState, propertyName, propertySlot)) {
             return true;
         }
+        std::cout << propertyName.publicName()->characters8();
 
         GlobalObject* globalObject = jsCast<GlobalObject*>(object);
         VM& vm = execState->vm();
@@ -325,13 +330,49 @@ bool GlobalObject::getOwnPropertySlot(JSObject* object, ExecState* execState, Pr
         StringImpl* symbolName = propertyName.publicName();
         if (symbolName == nullptr)
             return false;
-
-        const Meta* symbolMeta = Metadata::MetaFile::instance()->globalTableJs()->findMeta(symbolName);
-        if (symbolMeta == nullptr)
-            return false;
-
+        
         Strong<JSCell> strongSymbolWrapper;
         JSValue symbolWrapper;
+
+        const Meta* symbolMeta = Metadata::MetaFile::instance()->globalTableJs()->findMeta(symbolName);
+        if (symbolMeta == nullptr) {
+            
+//            // start of swift POC code
+//            void* functionSymbol = SymbolLoader::instance().loadSwiftFunctionSymbol("$s8Gameraww7aMethodyyF");
+//            if (functionSymbol) {
+//                auto returnType = globalObject->typeFactory()->getVoidType(globalObject);
+//                WTF::Vector<Strong<JSCell>> types;
+//                auto parametersTypes = types;
+//                
+//                strongSymbolWrapper = SwiftFunctionWrapper::create(vm, globalObject->swiftFunctionWrapperStructure(), functionSymbol, "aMethod", returnType.get(), types, false);
+//                
+//                if (strongSymbolWrapper) {
+//                    symbolWrapper = strongSymbolWrapper.get();
+//                }
+//
+//                if (!symbolWrapper) {
+//                    WTF::String errorMessage = makeString("Metadata for \"", symbolMeta->topLevelModule()->getName(), ".", symbolMeta->name(), "\" found but symbol not available at runtime.");
+//                    JSC::VM& vm = execState->vm();
+//                    auto scope = DECLARE_THROW_SCOPE(vm);
+//
+//                    throwVMError(execState, scope, createReferenceError(execState, errorMessage));
+//                    propertySlot.setValue(object, static_cast<unsigned>(PropertyAttribute::None), jsUndefined());
+//                    return true;
+//                }
+//
+//                object->putDirect(vm, propertyName, symbolWrapper);
+//                propertySlot.setValue(object, static_cast<unsigned>(PropertyAttribute::None), symbolWrapper);
+//                return true;
+//                // end of swift POC code
+                
+//            }
+            return false;
+            
+        }
+            
+            
+
+        
 
         switch (symbolMeta->type()) {
         case Interface: {

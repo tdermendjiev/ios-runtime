@@ -2,6 +2,7 @@ set(RESOURCES
     app
     GAMApplication.storyboard
     Images.xcassets
+    SwiftClass.swift
 )
 
 file(COPY "${INFO_PLIST_TEMPLATE}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

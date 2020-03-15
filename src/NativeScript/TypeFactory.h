@@ -50,6 +50,8 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
+    Strong<JSC::JSCell> getVoidType(GlobalObject*);
+    
     Strong<JSC::JSCell> parseType(GlobalObject*, const Metadata::TypeEncoding*&, bool isStructMember);
 
     const WTF::Vector<JSC::Strong<JSC::JSCell>> parseTypes(GlobalObject*, const Metadata::TypeEncoding*& typeEncodings, int count, bool isStructMember);
@@ -82,7 +84,7 @@ public:
     FFISimpleType* noopType() const {
         return this->_noopType.get();
     };
-    FFISimpleType* voidType() const {
+    FFISimpleType* voidType() {
         return this->_voidType.get();
     };
     FFISimpleType* boolType() const {

@@ -115,6 +115,8 @@ set(HEADER_FILES
     Workers/JSWorkerInstance.h
     Workers/JSWorkerPrototype.h
     Workers/WorkerMessagingProxy.h
+    Swift/SwiftFunctionWrapper.h
+    nlohmann/json.hpp
 )
 
 set(SOURCE_FILES
@@ -218,6 +220,7 @@ set(SOURCE_FILES
     Workers/JSWorkerInstance.mm
     Workers/JSWorkerPrototype.cpp
     Workers/WorkerMessagingProxy.mm
+    Swift/SwiftFunctionWrapper.mm
 )
 
 set(NativeScript_PUBLIC_HEADERS

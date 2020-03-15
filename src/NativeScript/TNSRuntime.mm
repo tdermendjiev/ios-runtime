@@ -31,6 +31,10 @@
 
 #include <mach/mach_host.h>
 
+#include "nlohmann/json.hpp"
+
+using namespace nlohmann;
+
 using namespace JSC;
 using namespace NativeScript;
 
@@ -153,6 +157,10 @@ void install_handler(int sig) {
 
 + (void)initializeMetadata:(void*)metadataPtr {
     Metadata::MetaFile::setInstance(metadataPtr);
+}
+
++ (void)initializeSwiftMetadata() {
+    json j = json::parse("{ \"happy\": true, \"pi\": 3.141 }");
 }
 
 - (instancetype)initWithApplicationPath:(NSString*)applicationPath {

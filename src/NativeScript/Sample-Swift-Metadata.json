@@ -1,0 +1,25 @@
+[
+    {
+      "kind": "function",
+      "name": "aMethod",
+      "usr": "7aMethodyyF"
+    },
+    {
+      "kind": "class",
+      "name": "TestClass",
+      "usr": "04TestB0C",
+      "instanceMethods": [
+          {
+            "kind": "method.instance",
+            "name": "classMethod",
+            "usr": "04TestB0C11classMethodyyF"
+          },
+          {
+            "kind": "constructor",
+            "name": "",
+            "usr": "04TestB0CACycfc"
+          }
+
+      ]
+    }
+  ]
