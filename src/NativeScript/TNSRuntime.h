@@ -23,6 +23,8 @@ FOUNDATION_EXTERN void TNSSetUncaughtErrorHandler(TNSUncaughtErrorHandler handle
 
 + (void)initializeMetadata:(void*)metadataPtr;
 
++ (void)initializeSwiftMetadata;
+
 + (TNSRuntime*)current;
 
 - (instancetype)initWithApplicationPath:(NSString*)applicationPath;

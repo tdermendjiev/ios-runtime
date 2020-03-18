@@ -1,6 +1,6 @@
-TKDataSource.alloc()
+//TKDataSource.alloc()
 
-//aMethod();
+aMethod();
 
 //import './CanvasViewController';
 //import './DetailViewController';

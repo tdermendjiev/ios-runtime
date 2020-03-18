@@ -10,6 +10,7 @@ extern char startOfMetadataSection __asm("section$start$__DATA$__TNSMetadata");
 int main(int argc, char *argv[]) {
   @autoreleasepool {
     [TNSRuntime initializeMetadata:&startOfMetadataSection];
+      [TNSRuntime initializeSwiftMetadata];
     TNSRuntime *runtime = [[TNSRuntime alloc]
         initWithApplicationPath:[NSBundle mainBundle].bundlePath];
     [runtime scheduleInRunLoop:[NSRunLoop currentRunLoop]

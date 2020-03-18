@@ -10,6 +10,39 @@
 
 namespace NativeScript {
 
+
+class SwiftFunctionCall : public FFICall {
+
+public:
+    SwiftFunctionCall(FunctionWrapper* owner, void* functionPointer, bool retainsReturnedCocoaObjects)
+        : FFICall(owner)
+        , _functionPointer(functionPointer)
+        , _retainsReturnedCocoaObjects(retainsReturnedCocoaObjects) {
+    }
+
+    DECLARE_INFO;
+
+    template <typename CellType, JSC::SubspaceAccess mode>
+    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm) {
+        return &vm.tnsSwiftFunctionWrapperSpace;
+    }
+
+    void* functionPointer() const {
+        return this->_functionPointer;
+    }
+    bool retainsReturnedCocoaObjects() const {
+        return this->_retainsReturnedCocoaObjects;
+    }
+
+private:
+    void* _functionPointer;
+
+    bool _retainsReturnedCocoaObjects;
+};
+
+
+
+
 class SwiftFunctionWrapper : public FunctionWrapper {
 public:
     typedef FunctionWrapper Base;
@@ -45,34 +78,4 @@ private:
     static void postInvocation(FFICall*, JSC::ExecState*, FFICall::Invocation&);
 };
 
-class SwiftFunctionCall : public FFICall {
-
-public:
-    SwiftFunctionCall(FunctionWrapper* owner, void* functionPointer, bool retainsReturnedCocoaObjects)
-        : FFICall(owner)
-        , _functionPointer(functionPointer)
-        , _retainsReturnedCocoaObjects(retainsReturnedCocoaObjects) {
-    }
-
-    DECLARE_INFO;
-
-    template <typename CellType, JSC::SubspaceAccess mode>
-    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm) {
-        return &vm.tnsSwiftFunctionWrapperSpace;
-    }
-
-    void* functionPointer() const {
-        return this->_functionPointer;
-    }
-    bool retainsReturnedCocoaObjects() const {
-        return this->_retainsReturnedCocoaObjects;
-    }
-
-private:
-    void* _functionPointer;
-
-    bool _retainsReturnedCocoaObjects;
-};
-
 } // namespace NativeScript
-

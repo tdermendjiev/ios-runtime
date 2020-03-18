@@ -55,6 +55,9 @@
 #include <chrono>
 #include <string>
 #include <iostream>
+#include "Metadata/SwiftMetadata.hpp"
+
+#include <JavaScriptCore/runtime/JSONObject.h>
 
 namespace NativeScript {
 using namespace JSC;
@@ -317,7 +320,7 @@ bool GlobalObject::getOwnPropertySlot(JSObject* object, ExecState* execState, Pr
         if (Base::getOwnPropertySlot(object, execState, propertyName, propertySlot)) {
             return true;
         }
-        std::cout << propertyName.publicName()->characters8();
+//        std::cout << propertyName.publicName()->characters8();
 
         GlobalObject* globalObject = jsCast<GlobalObject*>(object);
         VM& vm = execState->vm();
@@ -336,36 +339,42 @@ bool GlobalObject::getOwnPropertySlot(JSObject* object, ExecState* execState, Pr
 
         const Meta* symbolMeta = Metadata::MetaFile::instance()->globalTableJs()->findMeta(symbolName);
         if (symbolMeta == nullptr) {
+            RefPtr<JSON::Object> symbolObject;
             
-//            // start of swift POC code
-//            void* functionSymbol = SymbolLoader::instance().loadSwiftFunctionSymbol("$s8Gameraww7aMethodyyF");
-//            if (functionSymbol) {
-//                auto returnType = globalObject->typeFactory()->getVoidType(globalObject);
-//                WTF::Vector<Strong<JSCell>> types;
-//                auto parametersTypes = types;
-//                
-//                strongSymbolWrapper = SwiftFunctionWrapper::create(vm, globalObject->swiftFunctionWrapperStructure(), functionSymbol, "aMethod", returnType.get(), types, false);
-//                
-//                if (strongSymbolWrapper) {
-//                    symbolWrapper = strongSymbolWrapper.get();
-//                }
-//
-//                if (!symbolWrapper) {
-//                    WTF::String errorMessage = makeString("Metadata for \"", symbolMeta->topLevelModule()->getName(), ".", symbolMeta->name(), "\" found but symbol not available at runtime.");
-//                    JSC::VM& vm = execState->vm();
-//                    auto scope = DECLARE_THROW_SCOPE(vm);
-//
-//                    throwVMError(execState, scope, createReferenceError(execState, errorMessage));
-//                    propertySlot.setValue(object, static_cast<unsigned>(PropertyAttribute::None), jsUndefined());
-//                    return true;
-//                }
-//
-//                object->putDirect(vm, propertyName, symbolWrapper);
-//                propertySlot.setValue(object, static_cast<unsigned>(PropertyAttribute::None), symbolWrapper);
-//                return true;
-//                // end of swift POC code
-                
-//            }
+            const char* symbol = SwiftMeta::findSymbol(symbolName);
+            if (symbol) {
+
+                void* functionSymbol = SymbolLoader::instance().loadSwiftFunctionSymbol(symbol);
+                if (functionSymbol) {
+                    auto returnType = globalObject->typeFactory()->getVoidType(globalObject);
+                    WTF::Vector<Strong<JSCell>> types;
+                    auto parametersTypes = types;
+                    
+                    strongSymbolWrapper = SwiftFunctionWrapper::create(vm, globalObject->swiftFunctionWrapperStructure(), functionSymbol, symbolName->characters8(), returnType.get(), types, false);
+                    
+                    if (strongSymbolWrapper) {
+                        symbolWrapper = strongSymbolWrapper.get();
+                    }
+
+                    if (!symbolWrapper) {
+                        WTF::String errorMessage = makeString("Metadata for \"", symbolMeta->topLevelModule()->getName(), ".", symbolMeta->name(), "\" found but symbol not available at runtime.");
+                        JSC::VM& vm = execState->vm();
+                        auto scope = DECLARE_THROW_SCOPE(vm);
+
+                        throwVMError(execState, scope, createReferenceError(execState, errorMessage));
+                        propertySlot.setValue(object, static_cast<unsigned>(PropertyAttribute::None), jsUndefined());
+                        return true;
+                    }
+
+                    object->putDirect(vm, propertyName, symbolWrapper);
+                    propertySlot.setValue(object, static_cast<unsigned>(PropertyAttribute::None), symbolWrapper);
+                    return true;
+                    // end of swift POC code
+                    
+                }
+            }
+            
+           
             return false;
             
         }

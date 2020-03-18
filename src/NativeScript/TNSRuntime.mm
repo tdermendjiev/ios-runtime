@@ -15,6 +15,7 @@
 #include <JavaScriptCore/JSModuleLoader.h>
 #include <JavaScriptCore/JSNativeStdFunction.h>
 #include <JavaScriptCore/inspector/JSGlobalObjectInspectorController.h>
+#include <JavaScriptCore/runtime/JSONObject.h>
 
 #if PLATFORM(IOS)
 #import <UIKit/UIApplication.h>
@@ -31,9 +32,17 @@
 
 #include <mach/mach_host.h>
 
-#include "nlohmann/json.hpp"
 
-using namespace nlohmann;
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <streambuf>
+#include <vector>
+#include "Metadata/SwiftMetadata.hpp"
+
+//#include "nlohmann/json.hpp"
+
+//using namespace nlohmann;
 
 using namespace JSC;
 using namespace NativeScript;
@@ -159,8 +168,38 @@ void install_handler(int sig) {
     Metadata::MetaFile::setInstance(metadataPtr);
 }
 
-+ (void)initializeSwiftMetadata() {
-    json j = json::parse("{ \"happy\": true, \"pi\": 3.141 }");
++ (void)initializeSwiftMetadata {
+    std::ifstream t("/Users/teodordermendzhiev/workspace/ios-runtime/src/NativeScript/Sample-Swift-Metadata.json");
+    std::string contents;
+
+    contents.assign(std::istreambuf_iterator<char>(t),
+                    std::istreambuf_iterator<char>());
+    String input = String(contents.c_str());
+    RefPtr<JSON::Value> output;
+    if (JSON::Value::parseJSON(input, output)) {
+//        std::cout << output->toJSONString().characters8();
+        RefPtr<JSON::Array> items;
+        if (output->asArray(items)) {
+            SwiftMeta::setSwiftMetadata(items);
+//            for (auto it = items->begin(); it!= items->end(); ++it) {
+//                RefPtr<JSON::Value> v = *it;
+//                RefPtr<JSON::Object> meta;
+//                if (v->asObject(meta)) {
+//                    WTF::String kind;
+//                    if (meta->getString(WTF::String("kind"), kind)) {
+//                        std::cout << kind.characters8();
+//                    }
+//                } else {
+//                    //throw not an object
+//                }
+//            }
+        } else {
+            //throw not array error
+        }
+        
+    } else {
+        //throw parsing failed
+    }
 }
 
 - (instancetype)initWithApplicationPath:(NSString*)applicationPath {
